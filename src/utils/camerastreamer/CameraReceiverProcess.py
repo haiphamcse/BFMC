@@ -42,7 +42,7 @@ import multiprocessing
 from multiprocessing import Process,Event
 
 from src.templates.workerprocess import WorkerProcess
-
+import torch
 
 class CameraReceiverProcess(WorkerProcess):
     # ===================================== INIT =========================================
@@ -60,7 +60,7 @@ class CameraReceiverProcess(WorkerProcess):
         super(CameraReceiverProcess,self).__init__(inPs, outPs)
 
         
-
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', 'weights/best.pt')
         self.imgSize    = (480,640,3)
     # ===================================== RUN ==========================================
     def run(self):
@@ -106,7 +106,9 @@ class CameraReceiverProcess(WorkerProcess):
                 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
                 image = np.reshape(image, self.imgSize)
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
+                # ----------------------- process image -----------------------
+                results = self.model(image)
+                print(results.pred) #list of tensors pred[0] = (xyxy, conf, cls)
                 # ----------------------- show images -------------------
                 cv2.imshow('Image', image) 
                 cv2.waitKey(1)

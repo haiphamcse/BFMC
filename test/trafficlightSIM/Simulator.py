@@ -131,7 +131,7 @@ class sim(Thread):
         value = {"id":id, "state":state}
         message = json.dumps(value)
         # Debug message
-        # print('sending {!r}'.format(message))
+        print('sending {!r}'.format(message))
         sent = self.sock.sendto(message.encode('utf-8'), self.server_address)
 
 def runAdvertiser():
@@ -144,7 +144,7 @@ def runAdvertiser():
     # Start the broadcaster
     Adv.start()
     # Wait until 60 seconds passed
-    while (time.time()-start_time < 60):
+    while (time.time()-start_time < 20):
         time.sleep(0.5)
     # Stop the broadcaster
     Adv.stop()
